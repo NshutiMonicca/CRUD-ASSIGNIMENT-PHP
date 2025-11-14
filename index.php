@@ -54,10 +54,11 @@
 <body>
 
 <?php
-$connect = mysqli_connect('localhost', 'root', '', 'juice_bar');
-if (!$connect) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+include 'connection.php';
+// $connect = mysqli_connect('localhost', 'root', '', 'juice_bar');
+// if (!$connect) {
+//     die("Connection failed: " . mysqli_connect_error());
+// }
 
 // Initialize variables
 $jname = $price = $quantity = $quality = $expired_date = "";
@@ -114,8 +115,8 @@ if (isset($_POST['update'])) {
 
 
 // Delete Juice
-if (isset($_POST['delete'])) {
-    $id = $_POST['jid'];
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
     $query = "DELETE FROM juices WHERE jid=$id";
     mysqli_query($connect, $query);
 
@@ -130,7 +131,7 @@ if (isset($_POST['delete'])) {
 // -------- Load data for editing --------
 if (isset($_GET['edit'])) {
     $edit_id = $_GET['edit'];
-    $result = mysqli_query($connect, "SELECT * FROM juices WHERE jid=$edit_id");
+    $result = mysqli_query($conn, "SELECT * FROM juices WHERE jid=$edit_id");
     if ($row = mysqli_fetch_assoc($result)) {
         $jname = $row['jname'];
         $price = $row['price'];
@@ -141,7 +142,7 @@ if (isset($_GET['edit'])) {
 }
 
 // Fetch all juices for display
-$result = mysqli_query($connect, "SELECT * FROM juices");
+$result = mysqli_query($conn, "SELECT * FROM juices");
 ?>
 
 <h1>Juice Management</h1>
@@ -176,6 +177,7 @@ $result = mysqli_query($connect, "SELECT * FROM juices");
         <button type="submit" name="add">Add Juice</button>
     <?php endif; ?>
 </form>
+ 
 
 <!-- Juice Table -->
 <?php if(mysqli_num_rows($result) > 0): ?>
@@ -199,16 +201,21 @@ $result = mysqli_query($connect, "SELECT * FROM juices");
                 <td><?php echo $row['expired_date']; ?></td>
                 <td>
                     <a href="?edit=<?php echo $row['jid'];?>"><button type="button">Update</button></a>
-                        <form method="POST" style="display:inline;">
-                        <input type="hidden" name="jid" value="<?php echo $row['jid']; ?>">
-                        <button type="submit" name="delete" onclick="return confirm('Are you sure?')">Delete</button>
+                    <a href="?delete=<?php echo $row['jid'];?>"><button type="button">Delete</button></a>
+                        <!-- <form method="POST" style="display:inline;">
+                        <input type="hidden" name="jid" value="<?php echo $row['jid']; ?>"> -->
+                        <!-- <button type="submit" name="delete" onclick="return confirm('Are you sure?')">Delete</button> -->
                 </form>
                 </td>
-            </tr>
+         
         <?php endwhile; ?>
+        
     </table>
 <?php else: ?>
     <p style="text-align:center;">No juices found.</p>
 <?php endif; ?>
+<center>
+<a href="login.php">LOGOUT</a></center>
+           
 </body>
 </html>
